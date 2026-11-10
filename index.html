@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Macan Senyap Tools</title>
+    <!-- Wajib menyertakan script ini -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: var(--tg-theme-bg-color, #17212b);
+            --text-color: var(--tg-theme-text-color, #ffffff);
+            --hint-color: var(--tg-theme-hint-color, #708499);
+            --button-color: var(--tg-theme-button-color, #5288c1);
+            --button-text-color: var(--tg-theme-button-text-color, #ffffff);
+            --secondary-bg: var(--tg-theme-secondary-bg-color, #232e3c);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            color: var(--hint-color);
+            font-size: 14px;
+        }
+
+        .grid-menu {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .tool-card {
+            background-color: var(--secondary-bg);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .tool-card:active {
+            transform: scale(0.95);
+            opacity: 0.8;
+        }
+
+        .tool-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .tool-title {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Form Input Section (Tersembunyi awalnya) */
+        #input-section {
+            display: none;
+            background-color: var(--secondary-bg);
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: auto;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .form-title {
+            font-size: 16px;
+            margin-bottom: 12px;
+            text-align: center;
+            color: var(--button-color);
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid var(--hint-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 16px;
+            margin-bottom: 16px;
+            outline: none;
+        }
+
+        input:focus { border-color: var(--button-color); }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: none;
+            background-color: var(--button-color);
+            color: var(--button-text-color);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:active { opacity: 0.7; }
+
+        .btn-cancel {
+            background-color: transparent;
+            color: var(--hint-color);
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>🐯 Macan Senyap</h1>
+        <p id="greeting">Premium Data Investigation</p>
+    </div>
+
+    <!-- Menu Grid -->
+    <div class="grid-menu" id="menu-grid">
+        <div class="tool-card" onclick="pilihFitur('CEK NIK', 'Masukkan 16 digit NIK')">
+            <span class="tool-icon">🆔</span>
+            <div class="tool-title">CEK NIK</div>
+        </div>
+        <div class="tool-card" onclick="pilihFitur('NIK FOTO', 'Masukkan 16 digit NIK')">
+            <span class="tool-icon">📸</span>
+            <div class="tool-title">NIK FOTO</div>
+        </div>
+        <div class="tool-card" onclick="pilihFitur('CEK NAMA', 'Masukkan Nama Lengkap')">
+            <span class="tool-icon">👤</span>
+            <div class="tool-title">CEK NAMA</div>
+        </div>
+        <div class="tool-card" onclick="pilihFitur('DATA BOCOR', 'Masukkan NIK / Data')">
+            <span class="tool-icon">💀</span>
+            <div class="tool-title">DATA BOCOR</div>
+        </div>
+        <div class="tool-card" onclick="pilihFitur('GETCONTACT', 'Masukkan No HP (08xx)')">
+            <span class="tool-icon">📞</span>
+            <div class="tool-title">GETCONTACT</div>
+        </div>
+        <div class="tool-card" onclick="pilihFitur('CEK PLAT', 'Masukkan Plat Nomor')">
+            <span class="tool-icon">🚘</span>
+            <div class="tool-title">CEK PLAT</div>
+        </div>
+        <div class="tool-card" onclick="pilihFitur('CEK POSISI', 'Masukkan No HP (08xx)')">
+            <span class="tool-icon">📍</span>
+            <div class="tool-title">CEK POSISI</div>
+        </div>
+        <div class="tool-card" onclick="pilihFitur('CEK KK', 'Masukkan 16 digit No KK')">
+            <span class="tool-icon">👨‍👩‍👧‍👦</span>
+            <div class="tool-title">CEK KK</div>
+        </div>
+    </div>
+
+    <!-- Form Input -->
+    <div id="input-section">
+        <div class="form-title" id="form-title">Masukkan Data</div>
+        <input type="text" id="input-data" placeholder="Ketik di sini..." autocomplete="off">
+        <button onclick="kirimKeBot()">Kirim ke Bot 🚀</button>
+        <button class="btn-cancel" onclick="tutupForm()">Batal</button>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand(); 
+        tg.ready();
+
+        // Menampilkan nama pengguna
+        const user = tg.initDataUnsafe?.user;
+        if (user) {
+            document.getElementById('greeting').innerText = `Halo, ${user.first_name}!`;
+        }
+
+        let fiturAktif = "";
+        let placeholderAktif = "";
+
+        // Fungsi saat kotak fitur diklik
+        function pilihFitur(namaFitur, placeholderText) {
+            fiturAktif = namaFitur;
+            placeholderAktif = placeholderText;
+            
+            document.getElementById('menu-grid').style.display = 'none';
+            document.getElementById('input-section').style.display = 'block';
+            document.getElementById('form-title').innerText = `📌 ${namaFitur}`;
+            
+            let inputEl = document.getElementById('input-data');
+            inputEl.placeholder = placeholderText;
+            inputEl.value = "";
+            inputEl.focus();
+        }
+
+        // Fungsi untuk menutup form dan kembali ke menu
+        function tutupForm() {
+            document.getElementById('menu-grid').style.display = 'grid';
+            document.getElementById('input-section').style.display = 'none';
+        }
+
+        // Fungsi saat tombol "Kirim ke Bot" ditekan
+        function kirimKeBot() {
+            let dataInput = document.getElementById('input-data').value.trim();
+            
+            if (dataInput === "") {
+                tg.showAlert("Data tidak boleh kosong!");
+                return;
+            }
+
+            // Kumpulkan data yang akan dikirim ke Python Bot
+            const dataKirim = {
+                action: "execute_feature",
+                feature: fiturAktif,
+                query: dataInput
+            };
+
+            // Kirim data ke bot dalam bentuk JSON String
+            tg.sendData(JSON.stringify(dataKirim));
+            
+            // Tutup Mini App setelah mengirim
+            tg.close();
+        }
+    </script>
+</body>
+</html>
