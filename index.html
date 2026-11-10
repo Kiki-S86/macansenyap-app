@@ -3,186 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Macan Senyap Tools</title>
-    <!-- Wajib menyertakan script ini -->
+    <title>Macan Senyap - System</title>
+    <!-- Wajib menyertakan script Telegram -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Font Terminal -->
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --bg-color: var(--tg-theme-bg-color, #17212b);
-            --text-color: var(--tg-theme-text-color, #ffffff);
-            --hint-color: var(--tg-theme-hint-color, #708499);
-            --button-color: var(--tg-theme-button-color, #5288c1);
-            --button-text-color: var(--tg-theme-button-text-color, #ffffff);
-            --secondary-bg: var(--tg-theme-secondary-bg-color, #232e3c);
+            --neon-green: #00ff41;
+            --neon-cyan: #00ffff;
+            --bg-color: #050505;
+            --panel-bg: rgba(0, 255, 65, 0.05);
+            --border-color: rgba(0, 255, 65, 0.3);
+            --text-color: #e0e0e0;
+            --danger: #ff003c;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Share Tech Mono', monospace; 
+        }
 
         body {
             background-color: var(--bg-color);
-            color: var(--text-color);
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
+            color: var(--neon-green);
+            padding: 15px;
             min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Efek Garis Scanning Monitor */
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 0 10px var(--panel-bg), inset 0 0 10px var(--panel-bg);
+            position: relative;
         }
 
         .header h1 {
             font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 4px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px var(--neon-green);
+            margin-bottom: 5px;
         }
 
         .header p {
-            color: var(--hint-color);
-            font-size: 14px;
+            color: var(--text-color);
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .header::before {
+            content: "[ SYSTEM ACTIVE ]";
+            position: absolute;
+            top: -10px; left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-color);
+            padding: 0 10px;
+            font-size: 10px;
+            color: var(--neon-green);
+            letter-spacing: 2px;
         }
 
         .grid-menu {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
-            margin-bottom: 24px;
+            margin-bottom: 25px;
         }
 
         .tool-card {
-            background-color: var(--secondary-bg);
-            border-radius: 12px;
-            padding: 16px;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            padding: 15px 10px;
             text-align: center;
             cursor: pointer;
-            transition: transform 0.1s, opacity 0.2s;
-            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.2s ease;
+            position: relative;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
         }
 
         .tool-card:active {
-            transform: scale(0.95);
-            opacity: 0.8;
+            background-color: rgba(0, 255, 65, 0.2);
+            box-shadow: 0 0 15px var(--neon-green);
+            transform: scale(0.98);
+        }
+
+        .tool-card::after {
+            content: "";
+            position: absolute;
+            bottom: 0; right: 0;
+            width: 10px; height: 10px;
+            background: var(--neon-green);
         }
 
         .tool-icon {
-            font-size: 28px;
+            font-size: 24px;
             margin-bottom: 8px;
             display: block;
+            filter: drop-shadow(0 0 5px var(--neon-green));
         }
 
         .tool-title {
             font-size: 13px;
-            font-weight: 600;
+            font-weight: bold;
+            letter-spacing: 1px;
+            color: var(--neon-green);
         }
 
-        /* Form Input Section (Tersembunyi awalnya) */
+        /* Form Input Terminal */
         #input-section {
             display: none;
-            background-color: var(--secondary-bg);
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
             padding: 20px;
-            border-radius: 16px;
-            margin-top: auto;
-            animation: slideUp 0.3s ease-out;
+            position: relative;
+            box-shadow: 0 0 15px var(--panel-bg);
+            animation: glitchIn 0.3s;
         }
 
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        @keyframes glitchIn {
+            0% { transform: translateX(-5px); opacity: 0; }
+            50% { transform: translateX(5px); }
+            100% { transform: translateX(0); opacity: 1; }
         }
 
         .form-title {
             font-size: 16px;
-            margin-bottom: 12px;
-            text-align: center;
-            color: var(--button-color);
+            margin-bottom: 15px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            background: #000;
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .prompt {
+            color: var(--neon-cyan);
+            margin-right: 10px;
+            font-size: 16px;
+            font-weight: bold;
         }
 
         input {
             width: 100%;
-            padding: 14px;
-            border-radius: 10px;
-            border: 1px solid var(--hint-color);
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background: transparent;
+            border: none;
+            color: var(--neon-green);
+            font-family: 'Share Tech Mono', monospace;
             font-size: 16px;
-            margin-bottom: 16px;
             outline: none;
         }
 
-        input:focus { border-color: var(--button-color); }
-
-        button {
-            width: 100%;
-            padding: 14px;
-            border-radius: 10px;
-            border: none;
-            background-color: var(--button-color);
-            color: var(--button-text-color);
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: opacity 0.2s;
+        input::placeholder {
+            color: rgba(0, 255, 65, 0.3);
         }
 
-        button:active { opacity: 0.7; }
-
-        .btn-cancel {
+        button.btn-execute {
+            width: 100%;
+            padding: 12px;
             background-color: transparent;
-            color: var(--hint-color);
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 16px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.2s;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+        }
+
+        button.btn-execute:active {
+            background-color: var(--neon-green);
+            color: #000;
+            box-shadow: 0 0 20px var(--neon-green);
+        }
+
+        button.btn-cancel {
+            width: 100%;
+            padding: 10px;
+            background-color: transparent;
+            border: none;
+            color: var(--danger);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 14px;
             margin-top: 10px;
+            cursor: pointer;
+            text-decoration: underline;
+            letter-spacing: 1px;
+        }
+
+        /* Footer Status */
+        .footer-status {
+            text-align: center;
+            font-size: 10px;
+            color: rgba(0, 255, 65, 0.5);
+            margin-top: 30px;
+            letter-spacing: 1px;
+        }
+        
+        /* Efek Blinking Cursor */
+        .cursor::after {
+            content: "_";
+            animation: blink 1s step-start infinite;
+        }
+        
+        @keyframes blink {
+            50% { opacity: 0; }
         }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>🐯 Macan Senyap</h1>
-        <p id="greeting">Premium Data Investigation</p>
+        <h1 class="cursor">MACAN SENYAP</h1>
+        <p id="greeting">INITIALIZING SYSTEM...</p>
     </div>
 
     <!-- Menu Grid -->
     <div class="grid-menu" id="menu-grid">
-        <div class="tool-card" onclick="pilihFitur('CEK NIK', 'Masukkan 16 digit NIK')">
+        <div class="tool-card" onclick="pilihFitur('CEK NIK', 'ENTER 16-DIGIT NIK')">
             <span class="tool-icon">🆔</span>
-            <div class="tool-title">CEK NIK</div>
+            <div class="tool-title">CEK_NIK</div>
         </div>
-        <div class="tool-card" onclick="pilihFitur('NIK FOTO', 'Masukkan 16 digit NIK')">
+        <div class="tool-card" onclick="pilihFitur('NIK FOTO', 'ENTER 16-DIGIT NIK')">
             <span class="tool-icon">📸</span>
-            <div class="tool-title">NIK FOTO</div>
+            <div class="tool-title">NIK_FOTO</div>
         </div>
-        <div class="tool-card" onclick="pilihFitur('CEK NAMA', 'Masukkan Nama Lengkap')">
+        <div class="tool-card" onclick="pilihFitur('CEK NAMA', 'ENTER FULL NAME')">
             <span class="tool-icon">👤</span>
-            <div class="tool-title">CEK NAMA</div>
+            <div class="tool-title">CEK_NAMA</div>
         </div>
-        <div class="tool-card" onclick="pilihFitur('DATA BOCOR', 'Masukkan NIK / Data')">
+        <div class="tool-card" onclick="pilihFitur('DATA BOCOR', 'ENTER NIK / QUERY')">
             <span class="tool-icon">💀</span>
-            <div class="tool-title">DATA BOCOR</div>
+            <div class="tool-title">DATA_BOCOR</div>
         </div>
-        <div class="tool-card" onclick="pilihFitur('GETCONTACT', 'Masukkan No HP (08xx)')">
+        <div class="tool-card" onclick="pilihFitur('GETCONTACT', 'ENTER PHONE NUMBER')">
             <span class="tool-icon">📞</span>
             <div class="tool-title">GETCONTACT</div>
         </div>
-        <div class="tool-card" onclick="pilihFitur('CEK PLAT', 'Masukkan Plat Nomor')">
+        <div class="tool-card" onclick="pilihFitur('CEK PLAT', 'ENTER PLATE NUMBER')">
             <span class="tool-icon">🚘</span>
-            <div class="tool-title">CEK PLAT</div>
+            <div class="tool-title">CEK_PLAT</div>
         </div>
-        <div class="tool-card" onclick="pilihFitur('CEK POSISI', 'Masukkan No HP (08xx)')">
+        <div class="tool-card" onclick="pilihFitur('CEK POSISI', 'ENTER PHONE NUMBER')">
             <span class="tool-icon">📍</span>
-            <div class="tool-title">CEK POSISI</div>
+            <div class="tool-title">CEK_POSISI</div>
         </div>
-        <div class="tool-card" onclick="pilihFitur('CEK KK', 'Masukkan 16 digit No KK')">
+        <div class="tool-card" onclick="pilihFitur('CEK KK', 'ENTER 16-DIGIT KK')">
             <span class="tool-icon">👨‍👩‍👧‍👦</span>
-            <div class="tool-title">CEK KK</div>
+            <div class="tool-title">CEK_KK</div>
         </div>
     </div>
 
-    <!-- Form Input -->
+    <!-- Form Input Terminal -->
     <div id="input-section">
-        <div class="form-title" id="form-title">Masukkan Data</div>
-        <input type="text" id="input-data" placeholder="Ketik di sini..." autocomplete="off">
-        <button onclick="kirimKeBot()">Kirim ke Bot 🚀</button>
-        <button class="btn-cancel" onclick="tutupForm()">Batal</button>
+        <div class="form-title" id="form-title">>_ EXECUTING MODULE...</div>
+        
+        <div class="input-wrapper">
+            <span class="prompt">C:\></span>
+            <input type="text" id="input-data" placeholder="TYPE HERE..." autocomplete="off" autofocus>
+        </div>
+        
+        <button class="btn-execute" onclick="kirimKeBot()">[ RUN COMMAND ]</button>
+        <button class="btn-cancel" onclick="tutupForm()">[ ABORT ]</button>
+    </div>
+
+    <div class="footer-status">
+        SECURE CONNECTION ESTABLISHED<br>
+        v2.0.26 | @Macansenyap86
     </div>
 
     <script>
@@ -190,23 +304,22 @@
         tg.expand(); 
         tg.ready();
 
-        // Menampilkan nama pengguna
+        // Tampilkan user (simulasi hacking login)
         const user = tg.initDataUnsafe?.user;
         if (user) {
-            document.getElementById('greeting').innerText = `Halo, ${user.first_name}!`;
+            document.getElementById('greeting').innerText = `USER: ${user.first_name.toUpperCase()} | ACCESS GRANTED`;
+        } else {
+            document.getElementById('greeting').innerText = "USER: UNKNOWN | GUEST ACCESS";
         }
 
         let fiturAktif = "";
-        let placeholderAktif = "";
 
-        // Fungsi saat kotak fitur diklik
         function pilihFitur(namaFitur, placeholderText) {
             fiturAktif = namaFitur;
-            placeholderAktif = placeholderText;
             
             document.getElementById('menu-grid').style.display = 'none';
             document.getElementById('input-section').style.display = 'block';
-            document.getElementById('form-title').innerText = `📌 ${namaFitur}`;
+            document.getElementById('form-title').innerText = `>_ TARGET: ${namaFitur}`;
             
             let inputEl = document.getElementById('input-data');
             inputEl.placeholder = placeholderText;
@@ -214,33 +327,36 @@
             inputEl.focus();
         }
 
-        // Fungsi untuk menutup form dan kembali ke menu
         function tutupForm() {
             document.getElementById('menu-grid').style.display = 'grid';
             document.getElementById('input-section').style.display = 'none';
         }
 
-        // Fungsi saat tombol "Kirim ke Bot" ditekan
         function kirimKeBot() {
             let dataInput = document.getElementById('input-data').value.trim();
             
             if (dataInput === "") {
-                tg.showAlert("Data tidak boleh kosong!");
+                tg.showAlert("⚠️ ERROR: INPUT CANNOT BE EMPTY");
                 return;
             }
 
-            // Kumpulkan data yang akan dikirim ke Python Bot
+            // Animasi Loading Terminal
+            const btn = document.querySelector('.btn-execute');
+            btn.innerText = "[ UPLOADING DATA... ]";
+            btn.style.color = "var(--neon-cyan)";
+            btn.style.borderColor = "var(--neon-cyan)";
+
+            // Kirim data ke Python Bot
             const dataKirim = {
                 action: "execute_feature",
                 feature: fiturAktif,
                 query: dataInput
             };
 
-            // Kirim data ke bot dalam bentuk JSON String
-            tg.sendData(JSON.stringify(dataKirim));
-            
-            // Tutup Mini App setelah mengirim
-            tg.close();
+            setTimeout(() => {
+                tg.sendData(JSON.stringify(dataKirim));
+                tg.close();
+            }, 500); // Delay dikit biar efek loadingnya kelihatan keren
         }
     </script>
 </body>
